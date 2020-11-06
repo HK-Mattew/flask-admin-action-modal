@@ -1,2 +1,2 @@
-* exclude
-*.py exclude=false
+* linguist-vendored
+*.py linguist-vendored=false
