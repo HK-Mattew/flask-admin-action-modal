@@ -8,8 +8,12 @@ Pt-BR: Abrir modal com formulário ao realizar a ação
 
 # Example of use
 ```python
-# from asm_modelview import ActionShowModal
-#Another imports
+from wtforms import HiddenField, IntegerField, Form
+from flask_admin.contrib.sqla import ModelView
+from wtforms.validators import InputRequired
+from asm_modelview import ActionShowModal
+from flask_admin.actions import action
+
 
 class AddMoney(Form):
     value = IntegerField(validators=[InputRequired()])
