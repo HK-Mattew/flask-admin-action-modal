@@ -1,4 +1,4 @@
-# flask-admin-action-modal
+# ASM - ActionShowModal
 
 English: Open modal with form when performing action
 
