@@ -1,0 +1,35 @@
+{% extends 'admin/model/list.html' %}
+
+{% block body %}
+    {{ super() }}
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="changeModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="{{ url_for('.index_view') }}" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></a>
+                    <h4 class="modal-title">{{ title_modal }}</h4>
+                </div>
+                <div class="modal-body">
+                    {% if asm_change %}
+                        {{ lib.render_form(form(), cancel_url=url_for('.index_view'), action=url_for('.asm_callback', action_name=action_name, ids=ids) ) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body %}
+
+{% block tail %}
+    {{ super() }}
+
+    <script>
+        {% if asm_change %}
+            $(document).ready(function(){
+                $("#changeModal").modal('show');
+            });
+        {% endif %}
+    </script>
+    
+{% endblock tail %}
