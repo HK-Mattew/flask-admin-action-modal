@@ -47,10 +47,23 @@ class ActionShowModal:
     def asm_callback(self, action_name, ids):
 
         if self.ASM_ACTIONS.get(action_name):
-            self.ASM_ACTIONS[action_name]['callback'](
-                ids=ids.split(','),
-                form=self.ASM_ACTIONS[action_name]['form'](request.form)
-                )
+            form = self.ASM_ACTIONS[action_name]['form'](request.form)
+            if form.validate():
+                self.ASM_ACTIONS[action_name]['callback'](
+                    ids=ids.split(','),
+                    form=form
+                    )
+            else:
+                context = {
+                    'asm_change': True,
+                    'ids': ids,
+                    **self.ASM_ACTIONS[action_name]
+                }
+                for key, value in context.items():
+                    self._template_args[key] = value
+
+                return self.index_view()
+
         else:
             return 'Non-existent action'
 
