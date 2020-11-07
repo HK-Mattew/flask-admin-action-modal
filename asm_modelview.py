@@ -13,8 +13,9 @@ class ActionShowModal:
 
     def create_action_modal(self, form, action_name, callback, title_modal='ASM Title'):
         if not self.ASM_ACTIONS.get(action_name):
+            
             self.ASM_ACTIONS[action_name] = {
-                'form': form,
+                'form': form() if isinstance(form, type) else form,
                 'action_name': action_name,
                 'callback': callback,
                 'title_modal': title_modal,
@@ -47,7 +48,7 @@ class ActionShowModal:
     def asm_callback(self, action_name, ids):
 
         if self.ASM_ACTIONS.get(action_name):
-            form = self.ASM_ACTIONS[action_name]['form'](request.form)
+            form = self.ASM_ACTIONS[action_name]['form'].__class__(request.form)
             if form.validate():
                 self.ASM_ACTIONS[action_name]['callback'](
                     ids=ids.split(','),
