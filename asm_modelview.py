@@ -12,15 +12,15 @@ class ActionShowModal:
     ASM_ACTIONS = {}
 
     def create_action_modal(self, form, action_name, callback, title_modal='ASM Title'):
-        if not self.ASM_ACTIONS.get(action_name):
-            
-            self.ASM_ACTIONS[action_name] = {
-                'form': form() if isinstance(form, type) else form,
-                'action_name': action_name,
-                'callback': callback,
-                'title_modal': title_modal,
-            }
+        if self.ASM_ACTIONS.get(action_name):
+            del self.ASM_ACTIONS[action_name]
 
+        self.ASM_ACTIONS[action_name] = {
+            'form': form() if isinstance(form, type) else form,
+            'action_name': action_name,
+            'callback': callback,
+            'title_modal': title_modal,
+        }
         return redirect(
             url_for('.index_view', action_name=action_name),
             code=307
