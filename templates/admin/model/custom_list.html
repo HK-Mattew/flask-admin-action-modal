@@ -12,7 +12,7 @@
                 </div>
                 <div class="modal-body">
                     {% if asm_change %}
-                        {{ lib.render_form(form, cancel_url=url_for('.index_view'), action=url_for('.asm_callback', action_name=action_name, ids=ids) ) }}
+                        {{ lib.render_form(form, cancel_url=url_for('.index_view'), action=url_for('.internal_asm_callback', action_name=action_name, ids=ids) ) }}
                     {% endif %}
                 </div>
             </div>
