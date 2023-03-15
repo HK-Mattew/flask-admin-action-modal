@@ -3,68 +3,43 @@ from flask import (
     redirect,
     url_for,
     flash,
-    request
+    request,
+    session
     )
 
 
 class ActionShowModal:
 
-    ASM_ACTIONS = {}
 
-    def create_action_modal(self, form, action_name, callback, title_modal='ASM Title'):
-        if self.ASM_ACTIONS.get(action_name):
-            del self.ASM_ACTIONS[action_name]
+    def asm_create_action_modal(self, form, action_name, title_modal='ASM Title'):
+        session.setdefault('ASM_ACTIONS', {})
+        self.ASM_ACTIONS = session['ASM_ACTIONS']
 
         self.ASM_ACTIONS[action_name] = {
-            'form': form() if isinstance(form, type) else form,
             'action_name': action_name,
-            'callback': callback,
             'title_modal': title_modal,
         }
-        return redirect(
-            url_for('.index_view', action_name=action_name),
-            code=307
-            )
 
-    @expose('/', methods=['POST'])
-    def index(self):
-        action_name = request.args.get('action_name')
-        if action_name:
-            if not self.ASM_ACTIONS.get(action_name):
-                return 'Non-existent action'
+        context = {
+            'asm_change': True,
+            'ids': ','.join(request.form.getlist('rowid')),
+            'action_name': action_name,
+            'title_modal': title_modal,
+            'form': form() if isinstance(form, type) else form
+        }
+        for key, value in context.items():
+            self._template_args[key] = value
 
-            context = {
-                'asm_change': True,
-                'ids': ','.join(request.form.getlist('rowid')),
-                **self.ASM_ACTIONS[action_name]
-            }
-            for key, value in context.items():
-                self._template_args[key] = value
+        return self.index_view()
 
-            return self.index_view()
 
 
     @expose('/asm_callback/<action_name>/<ids>', methods=['POST'])
-    def asm_callback(self, action_name, ids):
+    def internal_asm_callback(self, action_name, ids):
 
         if self.ASM_ACTIONS.get(action_name):
-            form = self.ASM_ACTIONS[action_name]['form'].__class__(request.form)
-            if form.validate():
-                self.ASM_ACTIONS[action_name]['callback'](
-                    ids=ids.split(','),
-                    form=form
-                    )
-            else:
-                context = {
-                    'asm_change': True,
-                    'ids': ids,
-                    **self.ASM_ACTIONS[action_name]
-                }
-                for key, value in context.items():
-                    self._template_args[key] = value
-
-                return self.index_view()
-
+            self.asm_callback(action_name, ids.split(','))
+            del self.ASM_ACTIONS
         else:
             return 'Non-existent action'
 
