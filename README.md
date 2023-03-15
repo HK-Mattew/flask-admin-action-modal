@@ -27,20 +27,29 @@ class User(ModelView, ActionShowModal):
     @action('add_money', 'Adicionar Dinheiro', confirmation=None)
     def add_money(self, ids):
 
-        return self.create_action_modal(
+        return self.asm_create_action_modal(
             form=AddMoney,
             action_name='add_money',
-            callback=self.callback_add_money,
             title_modal='Adicionar Dinheiro'
             )
 
 
-    def callback_add_money(self, ids, form):
+    def asm_callback(self, action_name: str, ids: list):
         """
         Apply the desired action
         """
-        display_ids = ','.join(ids)
-        flash(f'Callback IDS: {display_ids} | Callback Value: {form.value.data}')
+        
+        if action_name == 'add_money':
+
+            form = AddMoney(request.form)
+            if form.validate():
+                display_ids = ','.join(ids)
+                flash(f'Valid form data! Callback IDS: {display_ids} | Callback Value: {form.value.data}', 'success')
+            else:
+                flash('Invalid form data!', 'info')
+
+        else:
+            flash('Invalid Action Name!', 'error')
 
 
 ```
