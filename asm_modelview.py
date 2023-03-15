@@ -36,6 +36,8 @@ class ActionShowModal:
 
     @expose('/asm_callback/<action_name>/<ids>', methods=['POST'])
     def internal_asm_callback(self, action_name, ids):
+        session.setdefault('ASM_ACTIONS', {})
+        self.ASM_ACTIONS = session['ASM_ACTIONS']
 
         if self.ASM_ACTIONS.get(action_name):
             self.asm_callback(action_name, ids.split(','))
